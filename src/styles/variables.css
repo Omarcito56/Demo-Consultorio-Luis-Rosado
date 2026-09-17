@@ -1,0 +1,79 @@
+:root {
+  /* Brand Medical Color Palette */
+  --color-primary: #123C69;
+  --color-primary-hover: #0D2C4D;
+  --color-primary-light: #1E5085;
+  --color-primary-soft: #EAF4FB;
+  --color-primary-soft-border: #C8E2F5;
+
+  --color-accent: #2DBE9F;
+  --color-accent-hover: #249D83;
+  --color-accent-soft: #E6F8F4;
+  --color-accent-border: #A3E9D9;
+
+  --color-bg: #F7F9FB;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F1F5F9;
+
+  /* Typography Colors */
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #6B7280;
+  --color-text-muted: #9CA3AF;
+  --color-text-inverse: #FFFFFF;
+
+  /* Status Colors */
+  --status-pending-bg: #FEF3C7;
+  --status-pending-text: #92400E;
+  --status-pending-border: #FDE68A;
+
+  --status-confirmed-bg: #E6F8F4;
+  --status-confirmed-text: #065F46;
+  --status-confirmed-border: #A3E9D9;
+
+  --status-attended-bg: #EAF4FB;
+  --status-attended-text: #123C69;
+  --status-attended-border: #C8E2F5;
+
+  --status-cancelled-bg: #FEE2E2;
+  --status-cancelled-text: #991B1B;
+  --status-cancelled-border: #FECACA;
+
+  --status-rescheduled-bg: #EDE9FE;
+  --status-rescheduled-text: #5B21B6;
+  --status-rescheduled-border: #DDD6FE;
+
+  --status-noassist-bg: #F3F4F6;
+  --status-noassist-text: #4B5563;
+  --status-noassist-border: #E5E7EB;
+
+  /* Typography */
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(18, 60, 105, 0.04);
+  --shadow-sm: 0 2px 4px 0 rgba(18, 60, 105, 0.06);
+  --shadow-md: 0 4px 12px -1px rgba(18, 60, 105, 0.08), 0 2px 6px -1px rgba(18, 60, 105, 0.04);
+  --shadow-lg: 0 10px 25px -3px rgba(18, 60, 105, 0.1), 0 4px 10px -2px rgba(18, 60, 105, 0.04);
+  --shadow-xl: 0 20px 35px -5px rgba(18, 60, 105, 0.12);
+
+  /* Borders & Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --border-light: 1px solid #E5E9F0;
+  --border-subtle: 1px solid #EEF2F6;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.35s ease;
+
+  /* Layout */
+  --container-max-width: 1200px;
+  --navbar-height: 76px;
+  --sidebar-width: 260px;
+}

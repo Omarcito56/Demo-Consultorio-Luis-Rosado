@@ -1,0 +1,8 @@
+/* Master Stylesheet for Consultorio Dr. Luis Armando Rosado */
+@import "./styles/variables.css";
+@import "./styles/global.css";
+@import "./styles/navbar.css";
+@import "./styles/footer.css";
+@import "./styles/landing.css";
+@import "./styles/booking.css";
+@import "./styles/admin.css";
