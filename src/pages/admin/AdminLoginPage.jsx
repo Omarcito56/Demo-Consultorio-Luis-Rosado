@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { StethoscopeIcon, UserIcon, ArrowLeftIcon, AlertCircleIcon, ArrowRightIcon } from "../../components/common/Icons";
+import { trackEvent, useTrackOnMount } from "../../analytics/analytics";
 
 export const AdminLoginPage = () => {
   const [email, setEmail] = useState("");
@@ -8,12 +9,16 @@ export const AdminLoginPage = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Registrar apertura protegida contra duplicados de StrictMode
+  useTrackOnMount("admin_login_opened", { route: "/admin/login" });
+
   const handleLogin = (e) => {
     e.preventDefault();
     setError("");
 
     // Demo credentials check
     if (email.trim() === "admin@clinicflow.com" && password === "demo123") {
+      trackEvent("admin_login_success", { route: "/admin/dashboard" });
       localStorage.setItem("clinicflow_auth", "true");
       navigate("/admin/dashboard");
     } else {

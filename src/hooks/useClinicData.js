@@ -3,6 +3,8 @@ import { initialBusinessData } from "../data/businessData";
 import { initialServicesData } from "../data/servicesData";
 import { initialPatientsData } from "../data/patientsData";
 import { initialAppointmentsData } from "../data/appointmentsData";
+import { trackEvent } from "../analytics/analytics";
+
 
 const STORAGE_KEYS = {
   BUSINESS: "clinicflow_business",
@@ -154,10 +156,22 @@ export const useClinicData = () => {
   // Update appointment status
   const updateAppointmentStatus = (id, newStatus) => {
     const currentApts = getStored(STORAGE_KEYS.APPOINTMENTS, initialAppointmentsData);
+    const existingApt = currentApts.find((a) => a.id === id);
+    const oldStatus = existingApt ? existingApt.status : "desconocido";
+
     const updatedApts = currentApts.map((apt) =>
       apt.id === id ? { ...apt, status: newStatus } : apt
     );
     setStored(STORAGE_KEYS.APPOINTMENTS, updatedApts);
+
+    // Evento de analytics: cambio de estado solo si realmente cambió
+    if (oldStatus !== newStatus) {
+      trackEvent("record_status_changed", {
+        from_status: oldStatus,
+        to_status: newStatus,
+        record_type: "appointment"
+      });
+    }
   };
 
   // Reschedule appointment
@@ -174,7 +188,13 @@ export const useClinicData = () => {
         : apt
     );
     setStored(STORAGE_KEYS.APPOINTMENTS, updatedApts);
+
+    // Evento de analytics: cita reagendada (sin fecha, hora ni paciente)
+    trackEvent("record_rescheduled", {
+      record_type: "appointment"
+    });
   };
+
 
   // Update business configuration
   const updateBusiness = (updatedData) => {

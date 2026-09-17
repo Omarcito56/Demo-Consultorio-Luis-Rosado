@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useClinicData } from "../../hooks/useClinicData";
 import { SearchIcon, UserIcon, PhoneIcon, MailIcon, CalendarIcon, WhatsAppIcon } from "../../components/common/Icons";
+import { trackEvent, useTrackOnMount } from "../../analytics/analytics";
 
 export const AdminPatientsPage = () => {
   const { patients, appointments } = useClinicData();
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Registrar apertura protegida contra duplicados de StrictMode
+  useTrackOnMount("admin_patients_opened", { module: "patients" });
 
   const filteredPatients = patients.filter((patient) => {
     const term = searchTerm.toLowerCase();
@@ -67,7 +71,7 @@ export const AdminPatientsPage = () => {
                 </tr>
               ) : (
                 filteredPatients.map((patient) => (
-                  <tr key={patient.id}>
+                  <tr key={patient.id} className="ph-mask">
                     <td>
                       <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
                         <div style={{ 
@@ -85,9 +89,9 @@ export const AdminPatientsPage = () => {
                           {patient.name.charAt(0)}
                         </div>
                         <div>
-                          <div className="table-patient-name">{patient.name}</div>
+                          <div className="table-patient-name ph-mask">{patient.name}</div>
                           {patient.birthDate && (
-                            <div style={{ fontSize: "0.74rem", color: "var(--color-text-muted)" }}>
+                            <div className="ph-mask" style={{ fontSize: "0.74rem", color: "var(--color-text-muted)" }}>
                               Nacimiento: {patient.birthDate}
                             </div>
                           )}
@@ -95,10 +99,10 @@ export const AdminPatientsPage = () => {
                       </div>
                     </td>
                     <td>
-                      <span style={{ fontWeight: 600 }}>{patient.phone}</span>
+                      <span className="ph-mask" style={{ fontWeight: 600 }}>{patient.phone}</span>
                     </td>
                     <td>
-                      <span style={{ color: "var(--color-text-secondary)" }}>{patient.email || "—"}</span>
+                      <span className="ph-mask" style={{ color: "var(--color-text-secondary)" }}>{patient.email || "—"}</span>
                     </td>
                     <td>
                       <span style={{ color: "var(--color-primary)", fontWeight: 500 }}>
@@ -129,6 +133,12 @@ export const AdminPatientsPage = () => {
                         rel="noopener noreferrer"
                         className="btn btn-sm btn-action-wa"
                         title="Enviar mensaje por WhatsApp"
+                        onClick={() => {
+                          trackEvent("whatsapp_reminder_clicked", {
+                            module: "patients",
+                            record_type: "patient",
+                          });
+                        }}
                       >
                         <WhatsAppIcon size={14} />
                         <span>WhatsApp</span>

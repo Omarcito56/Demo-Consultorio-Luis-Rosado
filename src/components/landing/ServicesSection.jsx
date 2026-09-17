@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { initialServicesData, servicesDisclaimer } from "../../data/servicesData";
 import { ClockIcon, CalendarIcon, StethoscopeIcon, RefreshIcon, HeartIcon, ShieldIcon, ChatIcon } from "../common/Icons";
+import { trackEvent } from "../../analytics/analytics";
 
 export const ServicesSection = () => {
   const getIcon = (type) => {
@@ -58,6 +59,13 @@ export const ServicesSection = () => {
                   to={`/agendar?service=${service.id}`} 
                   className="btn btn-secondary" 
                   style={{ width: "100%" }}
+                  onClick={() => {
+                    trackEvent("demo_cta_clicked", { 
+                      cta_label: "agendar_service_card", 
+                      service_id: service.id, 
+                      route: "/" 
+                    });
+                  }}
                 >
                   <CalendarIcon size={16} />
                   <span>Agendar {service.name}</span>

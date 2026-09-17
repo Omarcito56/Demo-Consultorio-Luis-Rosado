@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useClinicData } from "../../hooks/useClinicData";
 import { 
   SearchIcon, FilterIcon, EyeIcon, CheckIcon, CheckCircleIcon, 
@@ -7,6 +7,7 @@ import {
 import { StatusBadge } from "../../components/common/StatusBadge";
 import { AppointmentDetailModal } from "../../components/admin/AppointmentDetailModal";
 import { RescheduleModal } from "../../components/admin/RescheduleModal";
+import { trackEvent, useTrackOnMount } from "../../analytics/analytics";
 
 export const AdminAppointmentsPage = () => {
   const { appointments, updateAppointmentStatus, rescheduleAppointment } = useClinicData();
@@ -14,6 +15,10 @@ export const AdminAppointmentsPage = () => {
   const [statusFilter, setStatusFilter] = useState("TODOS");
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [rescheduleApt, setRescheduleApt] = useState(null);
+
+  // Registrar apertura protegida contra duplicados de StrictMode
+  useTrackOnMount("admin_requests_opened", { module: "appointments" });
+
 
   // Filter in real time by search and status
   const filteredAppointments = appointments.filter((apt) => {
@@ -31,6 +36,12 @@ export const AdminAppointmentsPage = () => {
   // Reminder via wa.me:
   // "Hola [Paciente], te recordamos tu consulta con el Dr. Luis Armando Rosado el día [Fecha] a las [Hora]. Te esperamos."
   const sendWhatsAppReminder = (apt) => {
+    // Evento de analytics: clic en recordatorio (sin datos personales del paciente)
+    trackEvent("whatsapp_reminder_clicked", {
+      module: "appointments",
+      record_type: "appointment"
+    });
+
     const text = `Hola ${apt.patientName}, te recordamos tu consulta con el Dr. Luis Armando Rosado el día ${apt.date} a las ${apt.time}. Te esperamos.`;
     const url = `https://wa.me/52${apt.patientPhone}?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank");
@@ -106,11 +117,11 @@ export const AdminAppointmentsPage = () => {
                 filteredAppointments.map((apt) => (
                   <tr key={apt.id}>
                     <td>
-                      <span className="table-folio-link">{apt.folio}</span>
+                      <span className="table-folio-link ph-mask">{apt.folio}</span>
                     </td>
                     <td>
-                      <div className="table-patient-name">{apt.patientName}</div>
-                      <div className="table-patient-contact">{apt.patientPhone}</div>
+                      <div className="table-patient-name ph-mask">{apt.patientName}</div>
+                      <div className="table-patient-contact ph-mask">{apt.patientPhone}</div>
                     </td>
                     <td>
                       <div>{apt.serviceName}</div>
@@ -135,7 +146,13 @@ export const AdminAppointmentsPage = () => {
                         <button
                           type="button"
                           className="btn btn-sm btn-action-view"
-                          onClick={() => setSelectedAppointment(apt)}
+                          onClick={() => {
+                            trackEvent("record_detail_opened", {
+                              record_type: "appointment",
+                              status: apt.status
+                            });
+                            setSelectedAppointment(apt);
+                          }}
                           title="Ver detalle completo"
                         >
                           <EyeIcon size={14} />

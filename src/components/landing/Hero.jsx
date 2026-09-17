@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { CalendarIcon, UserIcon, CheckCircleIcon, ClockIcon, StethoscopeIcon, ShieldIcon } from "../common/Icons";
+import { trackEvent } from "../../analytics/analytics";
 
 export const Hero = () => {
   return (
@@ -22,7 +23,13 @@ export const Hero = () => {
           </p>
 
           <div className="hero-actions">
-            <Link to="/agendar" className="btn btn-primary">
+            <Link 
+              to="/agendar" 
+              className="btn btn-primary"
+              onClick={() => {
+                trackEvent("demo_cta_clicked", { cta_label: "agendar_hero", route: "/" });
+              }}
+            >
               <CalendarIcon size={18} />
               <span>Agendar consulta</span>
             </Link>

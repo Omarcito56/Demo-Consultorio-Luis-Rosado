@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useClinicData } from "../../hooks/useClinicData";
 import { SearchIcon, ClockIcon, StethoscopeIcon } from "../../components/common/Icons";
+import { trackEvent, useTrackOnMount } from "../../analytics/analytics";
 
 export const AdminServicesPage = () => {
   const { services } = useClinicData();
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Registrar apertura protegida contra duplicados de StrictMode
+  useTrackOnMount("admin_services_opened", { module: "services" });
 
   const filteredServices = services.filter((service) => {
     const term = searchTerm.toLowerCase();

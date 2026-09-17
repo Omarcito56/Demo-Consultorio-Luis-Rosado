@@ -7,6 +7,8 @@ import {
 import { StatusBadge } from "../../components/common/StatusBadge";
 import { AppointmentDetailModal } from "../../components/admin/AppointmentDetailModal";
 import { RescheduleModal } from "../../components/admin/RescheduleModal";
+import { trackEvent } from "../../analytics/analytics";
+
 
 export const AdminAgendaPage = () => {
   const { appointments, updateAppointmentStatus, rescheduleAppointment } = useClinicData();
@@ -49,6 +51,11 @@ export const AdminAgendaPage = () => {
 
   // Open WhatsApp reminder
   const sendWhatsAppReminder = (apt) => {
+    trackEvent("whatsapp_reminder_clicked", {
+      module: "agenda",
+      record_type: "appointment"
+    });
+
     const text = `Hola ${apt.patientName}, te recordamos tu consulta con el Dr. Luis Armando Rosado el día ${apt.date} a las ${apt.time}. Te esperamos.`;
     const url = `https://wa.me/52${apt.patientPhone}?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank");
@@ -121,14 +128,14 @@ export const AdminAgendaPage = () => {
                       </div>
                     </td>
                     <td>
-                      <div className="table-patient-name">{apt.patientName}</div>
-                      <div className="table-patient-contact">
+                      <div className="table-patient-name ph-mask">{apt.patientName}</div>
+                      <div className="table-patient-contact ph-mask">
                         {apt.patientPhone} {apt.isFirstTime && <span style={{ color: "var(--color-accent)", fontWeight: 600 }}>• Primera vez</span>}
                       </div>
                     </td>
                     <td>
                       <div style={{ fontWeight: 500 }}>{apt.serviceName}</div>
-                      <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>{apt.folio}</div>
+                      <div className="ph-mask" style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>{apt.folio}</div>
                     </td>
                     <td>
                       <span style={{ fontSize: "0.85rem", color: "var(--color-text-secondary)" }}>{apt.date}</span>
@@ -141,7 +148,13 @@ export const AdminAgendaPage = () => {
                         <button
                           type="button"
                           className="btn btn-sm btn-action-view"
-                          onClick={() => setSelectedAppointment(apt)}
+                          onClick={() => {
+                            trackEvent("record_detail_opened", {
+                              record_type: "appointment",
+                              status: apt.status
+                            });
+                            setSelectedAppointment(apt);
+                          }}
                           title="Ver detalle completo"
                         >
                           <EyeIcon size={14} />

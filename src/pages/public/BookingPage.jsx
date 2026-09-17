@@ -5,6 +5,8 @@ import {
   CalendarIcon, ClockIcon, UserIcon, ArrowRightIcon, ArrowLeftIcon, 
   CheckIcon, StethoscopeIcon, ShieldIcon, AlertCircleIcon 
 } from "../../components/common/Icons";
+import { trackEvent, useTrackOnMount } from "../../analytics/analytics";
+
 
 const TIME_SLOTS = [
   "9:00 a.m.",
@@ -61,6 +63,14 @@ export const BookingPage = () => {
       }));
     }
   }, [bookingData.serviceId, services]);
+
+  // Track booking_started una única vez al montar (protegido contra StrictMode)
+  useTrackOnMount("booking_started", {
+    flow_type: "medical_booking",
+    route: "/agendar",
+    source: searchParams.get("service") ? "service_card" : "direct"
+  });
+
 
   const handleServiceSelect = (service) => {
     setBookingData((prev) => ({
@@ -151,6 +161,12 @@ export const BookingPage = () => {
   const handleSubmitAppointment = (e) => {
     e.preventDefault();
     if (!validateStep()) return;
+
+    // Evento de analytics: flujo de reserva completado (sin datos personales)
+    trackEvent("booking_completed", {
+      flow_type: "medical_booking",
+      route: "/confirmacion"
+    });
 
     // Create appointment in localStorage
     const newAppointment = createAppointment(bookingData);
@@ -518,15 +534,15 @@ export const BookingPage = () => {
                 </div>
                 <div className="summary-row">
                   <span className="summary-label">Nombre del paciente:</span>
-                  <span className="summary-value">{bookingData.patientName}</span>
+                  <span className="summary-value ph-mask">{bookingData.patientName}</span>
                 </div>
                 <div className="summary-row">
                   <span className="summary-label">Teléfono / WhatsApp:</span>
-                  <span className="summary-value">{bookingData.patientPhone}</span>
+                  <span className="summary-value ph-mask">{bookingData.patientPhone}</span>
                 </div>
                 <div className="summary-row">
                   <span className="summary-label">Correo:</span>
-                  <span className="summary-value">{bookingData.patientEmail}</span>
+                  <span className="summary-value ph-mask">{bookingData.patientEmail}</span>
                 </div>
                 <div className="summary-row">
                   <span className="summary-label">Primera consulta:</span>
@@ -534,7 +550,7 @@ export const BookingPage = () => {
                 </div>
                 <div className="summary-row">
                   <span className="summary-label">Motivo general:</span>
-                  <span className="summary-value" style={{ maxWidth: "340px" }}>{bookingData.reason}</span>
+                  <span className="summary-value ph-mask" style={{ maxWidth: "340px" }}>{bookingData.reason}</span>
                 </div>
               </div>
 

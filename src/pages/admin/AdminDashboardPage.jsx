@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useClinicData } from "../../hooks/useClinicData";
 import { 
@@ -7,10 +7,15 @@ import {
 } from "../../components/common/Icons";
 import { StatusBadge } from "../../components/common/StatusBadge";
 import { AppointmentDetailModal } from "../../components/admin/AppointmentDetailModal";
+import { trackEvent, useTrackOnMount } from "../../analytics/analytics";
 
 export const AdminDashboardPage = () => {
   const { metrics, appointments } = useClinicData();
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+
+  // Registrar apertura protegida contra duplicados de StrictMode
+  useTrackOnMount("admin_dashboard_opened", { module: "dashboard" });
+
 
   // Filter upcoming active appointments (today and forward)
   const upcomingAppointments = appointments
@@ -129,11 +134,11 @@ export const AdminDashboardPage = () => {
                 {upcomingAppointments.map((apt) => (
                   <tr key={apt.id}>
                     <td>
-                      <span className="table-folio-link">{apt.folio}</span>
+                      <span className="table-folio-link ph-mask">{apt.folio}</span>
                     </td>
                     <td>
-                      <div className="table-patient-name">{apt.patientName}</div>
-                      <div className="table-patient-contact">{apt.patientPhone}</div>
+                      <div className="table-patient-name ph-mask">{apt.patientName}</div>
+                      <div className="table-patient-contact ph-mask">{apt.patientPhone}</div>
                     </td>
                     <td>{apt.serviceName}</td>
                     <td>
@@ -147,7 +152,13 @@ export const AdminDashboardPage = () => {
                       <button
                         type="button"
                         className="btn btn-sm btn-action-view"
-                        onClick={() => setSelectedAppointment(apt)}
+                        onClick={() => {
+                          trackEvent("record_detail_opened", {
+                            record_type: "appointment",
+                            status: apt.status
+                          });
+                          setSelectedAppointment(apt);
+                        }}
                         title="Ver detalle completo"
                       >
                         <EyeIcon size={14} />

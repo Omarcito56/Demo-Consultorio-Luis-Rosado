@@ -2,6 +2,7 @@ import React from "react";
 import { Modal } from "../common/Modal";
 import { StatusBadge } from "../common/StatusBadge";
 import { WhatsAppIcon, PhoneIcon, MailIcon, CalendarIcon, ClockIcon, UserIcon } from "../common/Icons";
+import { trackEvent } from "../../analytics/analytics";
 
 export const AppointmentDetailModal = ({ isOpen, onClose, appointment }) => {
   if (!appointment) return null;
@@ -11,7 +12,7 @@ export const AppointmentDetailModal = ({ isOpen, onClose, appointment }) => {
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Detalle de Cita: ${appointment.folio}`} maxWidth="620px">
+    <Modal isOpen={isOpen} onClose={onClose} title="Detalle de Cita Médica" maxWidth="620px">
       <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
         {/* Top summary row */}
         <div style={{ 
@@ -27,7 +28,7 @@ export const AppointmentDetailModal = ({ isOpen, onClose, appointment }) => {
             <span style={{ fontSize: "0.78rem", color: "var(--color-primary)", fontWeight: 700, textTransform: "uppercase" }}>
               FOLIO ASIGNADO
             </span>
-            <div style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--color-primary)", fontFamily: "monospace" }}>
+            <div className="ph-mask" style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--color-primary)", fontFamily: "monospace" }}>
               {appointment.folio}
             </div>
           </div>
@@ -44,7 +45,7 @@ export const AppointmentDetailModal = ({ isOpen, onClose, appointment }) => {
         <div className="detail-grid">
           <div>
             <div className="detail-lbl">Paciente</div>
-            <div className="detail-val">{appointment.patientName}</div>
+            <div className="detail-val ph-mask">{appointment.patientName}</div>
           </div>
 
           <div>
@@ -56,7 +57,7 @@ export const AppointmentDetailModal = ({ isOpen, onClose, appointment }) => {
 
           <div>
             <div className="detail-lbl">Teléfono / WhatsApp</div>
-            <div className="detail-val" style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+            <div className="detail-val ph-mask" style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
               <span>{appointment.patientPhone}</span>
               <a 
                 href={`https://wa.me/52${appointment.patientPhone}?text=${whatsappMessage}`}
@@ -72,12 +73,12 @@ export const AppointmentDetailModal = ({ isOpen, onClose, appointment }) => {
 
           <div>
             <div className="detail-lbl">Correo Electrónico</div>
-            <div className="detail-val">{appointment.patientEmail || "No registrado"}</div>
+            <div className="detail-val ph-mask">{appointment.patientEmail || "No registrado"}</div>
           </div>
 
           <div>
             <div className="detail-lbl">Fecha de Nacimiento</div>
-            <div className="detail-val">{appointment.birthDate || "No especificada"}</div>
+            <div className="detail-val ph-mask">{appointment.birthDate || "No especificada"}</div>
           </div>
 
           <div>
@@ -97,7 +98,7 @@ export const AppointmentDetailModal = ({ isOpen, onClose, appointment }) => {
 
           <div className="detail-item-full">
             <div className="detail-lbl">Motivo General de Consulta</div>
-            <div style={{ 
+            <div className="ph-mask" style={{ 
               background: "#F8FAFC", 
               padding: "0.85rem", 
               borderRadius: "8px", 
@@ -112,7 +113,7 @@ export const AppointmentDetailModal = ({ isOpen, onClose, appointment }) => {
           {appointment.comments && (
             <div className="detail-item-full">
               <div className="detail-lbl">Comentarios Adicionales</div>
-              <div style={{ 
+              <div className="ph-mask" style={{ 
                 background: "#F8FAFC", 
                 padding: "0.75rem", 
                 borderRadius: "8px", 
@@ -136,6 +137,12 @@ export const AppointmentDetailModal = ({ isOpen, onClose, appointment }) => {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-whatsapp btn-sm"
+            onClick={() => {
+              trackEvent("whatsapp_reminder_clicked", {
+                module: "appointment_modal",
+                record_type: "appointment"
+              });
+            }}
           >
             <WhatsAppIcon size={16} />
             <span>Contactar por WhatsApp</span>

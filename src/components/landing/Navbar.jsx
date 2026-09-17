@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { StethoscopeIcon, CalendarIcon, MenuIcon, XIcon, UserIcon } from "../common/Icons";
+import { trackEvent } from "../../analytics/analytics";
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -71,7 +72,13 @@ export const Navbar = () => {
             <UserIcon size={14} />
             <span>Recepción</span>
           </Link>
-          <Link to="/agendar" className="btn btn-primary btn-sm">
+          <Link 
+            to="/agendar" 
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              trackEvent("demo_cta_clicked", { cta_label: "agendar_navbar", route: location.pathname });
+            }}
+          >
             <CalendarIcon size={16} />
             <span>Agendar consulta</span>
           </Link>
@@ -105,7 +112,14 @@ export const Navbar = () => {
               Contacto
             </button>
             <div className="mobile-menu-actions">
-              <Link to="/agendar" className="btn btn-primary" onClick={closeMenu}>
+              <Link 
+                to="/agendar" 
+                className="btn btn-primary" 
+                onClick={() => {
+                  closeMenu();
+                  trackEvent("demo_cta_clicked", { cta_label: "agendar_navbar_mobile", route: location.pathname });
+                }}
+              >
                 <CalendarIcon size={18} />
                 <span>Agendar consulta</span>
               </Link>

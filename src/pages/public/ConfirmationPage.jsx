@@ -29,7 +29,7 @@ export const ConfirmationPage = () => {
             <CheckCircleIcon size={42} />
           </div>
 
-          <span className="confirmation-folio-pill">
+          <span className="confirmation-folio-pill ph-mask">
             FOLIO: {appointment.folio}
           </span>
 
@@ -43,7 +43,7 @@ export const ConfirmationPage = () => {
           <div className="confirmation-details-box">
             <div className="conf-detail-row">
               <span className="conf-detail-label">Paciente:</span>
-              <span className="conf-detail-val">{appointment.patientName}</span>
+              <span className="conf-detail-val ph-mask">{appointment.patientName}</span>
             </div>
             <div className="conf-detail-row">
               <span className="conf-detail-label">Tipo de consulta:</span>
@@ -57,7 +57,7 @@ export const ConfirmationPage = () => {
             </div>
             <div className="conf-detail-row">
               <span className="conf-detail-label">Teléfono registrado:</span>
-              <span className="conf-detail-val">{appointment.patientPhone}</span>
+              <span className="conf-detail-val ph-mask">{appointment.patientPhone}</span>
             </div>
             <div className="conf-detail-row">
               <span className="conf-detail-label">Ubicación:</span>
